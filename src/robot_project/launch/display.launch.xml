@@ -1,0 +1,37 @@
+<launch>
+    <!-- Definir parámetros compartidos -->
+    <let name="urdf_path" 
+         value="$(find-pkg-share robot_project)/urdf/my_robot.urdf.xacro" />
+
+    <let name="rviz_config_path" 
+         value="$(find-pkg-share robot_project)/rviz/urdf_config.rviz" />
+     
+     <!-- Publicar descripción del robot -->
+    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+        <param name="robot_description"
+               value="$(command 'xacro $(var urdf_path)')" />
+    </node>
+
+     <!-- GUI para los estados de las articulaciones -->
+    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" /> 
+
+    <!-- Ejecutar Rviz -->
+    <node pkg="rviz2" exec="rviz2" output="screen" 
+          args="-d $(var rviz_config_path)" />
+     
+     <!-- Nodos de simulación y serial -->
+     <node pkg="turtlesim" exec="turtlesim_node"/>
+
+     <node pkg="robot_project" exec="cmd_vel_turtle"/>
+
+    <!-- Ejecutar el nodo Python registrado -->
+    <node pkg="ros2_serial_interface" exec="serial_velocity_publisher" output="screen">
+        <param name="device" value="/dev/ttyUSB1" />
+        <param name="baudrate" value="115200" />
+        <param name="topic_name" value="/cmd_vel" />
+    </node>
+
+    <node pkg="robot_project" exec="robot_controller" />
+
+</launch>
+
