@@ -1,0 +1,3 @@
+[submodule "src/ros2_serial_interface"]
+	path = src/ros2_serial_interface
+	url = https://github.com/AnrdyShmrdy/ros2_serial_interface
